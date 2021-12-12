@@ -6,7 +6,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "pictures")
-data class PicturesEntity (
+data class PicturesEntity(
     @PrimaryKey(autoGenerate = true)
     @NonNull
     @Transient
@@ -14,7 +14,7 @@ data class PicturesEntity (
     val id: Int? = null,
 
     @ColumnInfo(name = "current_image_Url")
-    val  message:  String,
+    val message: String?,
 
     @ColumnInfo(name = "Status")
     val status: String

@@ -25,9 +25,6 @@ object ApplicationManager{
         ).build()
     }
 
-
-
-
     fun initialize(application: Application){
         this.application = application
     }

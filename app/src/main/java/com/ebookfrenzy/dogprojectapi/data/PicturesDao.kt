@@ -9,14 +9,14 @@ import kotlinx.coroutines.flow.Flow
 interface PicturesDao {
 
     @Query("SELECT * FROM pictures")
-    fun getAllPictures(): Flow<List<PicturesEntity>>
+    suspend fun getAllPictures(): List<PicturesEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE )
     suspend fun insertPictures(dogPictureEntity: PicturesEntity )
 
-
-
     @Query("SELECT * FROM pictures ORDER BY id DESC LIMIT 1")
-    fun getNewPicture() : PicturesEntity
+    suspend fun getLastPicture(): PicturesEntity
 
+    @Delete
+    suspend fun deletePicture(picture: PicturesEntity)
 }

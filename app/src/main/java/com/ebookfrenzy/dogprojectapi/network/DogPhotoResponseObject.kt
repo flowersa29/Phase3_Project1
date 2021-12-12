@@ -6,5 +6,4 @@ import com.squareup.moshi.Json
 data class DogPhotoResponseObject(
     @Json(name = "message") val imageUrl: String?,
     @Json(name = "status") val statusResponse: String
-
 )

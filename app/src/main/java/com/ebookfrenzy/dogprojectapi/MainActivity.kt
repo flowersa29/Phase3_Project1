@@ -2,12 +2,15 @@ package com.ebookfrenzy.dogprojectapi
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.core.net.toUri
 import coil.load
 import com.ebookfrenzy.dogprojectapi.data.PicturesEntity
 import com.ebookfrenzy.dogprojectapi.databinding.ActivityMainBinding
-import com.ebookfrenzy.dogprojectapi.network.DogApplication
+import com.ebookfrenzy.dogprojectapi.network.ApplicationManager
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -31,22 +34,46 @@ class MainActivity : AppCompatActivity() {
 
     fun getRandomPhoto() {
         val randomPhotoButton = binding.button
-        val currentImage = viewModel.dogPhoto.value!!.imageUrl
-        val previousImage = currentImage?.let {
-            dogImage -> PicturesEntity(message = dogImage)
-        }
+//        val currentImage = viewModel.dogPhoto.value!!.imageUrl
+//        val previousImage = currentImage?.let {
+//            dogImage -> PicturesEntity(message = dogImage, status = "Success")
+//        }
 
         viewModel.dogPhoto.observe(this, {
-            val imgUri = it.imageUrl!!
-                .toUri()
-                .buildUpon()
-                .scheme("https")
-                .build()
+                val imgUri = it.imageUrl!!
+                    .toUri()
+                    .buildUpon()
+                    .scheme("https")
+                    .build()
 
-            binding.imageView.load(imgUri)
-            randomPhotoButton.setOnClickListener{
-                viewModel.getNewPhoto()
-            }
+                binding.imageView.load(imgUri)
+                randomPhotoButton.setOnClickListener{
+                    viewModel.getNewPhoto()
+                }
+
+                binding.btnPrevious.setOnClickListener {
+                    getPreviousPhoto()
+                }
+
+                getDatabaseLog()
+
         })
+    }
+
+    private fun getPreviousPhoto() {
+        GlobalScope.launch {
+            val lastPicture = ApplicationManager.db.pictureDao().getLastPicture()
+            ApplicationManager.db.pictureDao().deletePicture(lastPicture)
+            Log.d("PreviousPhoto", "Id: ${lastPicture.id}")
+            binding.imageView.load(lastPicture.message)
+
+        }
+    }
+
+    private fun getDatabaseLog() {
+        GlobalScope.launch {
+            val databaseList = ApplicationManager.db.pictureDao().getAllPictures()
+            Log.d("MainActivity", "$databaseList")
+        }
     }
 }
